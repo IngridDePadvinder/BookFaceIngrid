@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kompaan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#F6F2E9;
+  --card:#FFFFFF;
+  --ink:#2B2723;
+  --ink-soft:#6B6358;
+  --border:#E8E0D2;
+  --teal:#1F6F66;
+  --teal-dark:#16504A;
+  --coral:#D9694B;
+  --gold:#B9872E;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  line-height:1.5;
+}
+h1,h2,h3,.brand,.profile-name,.post-name{
+  font-family:'Fraunces',serif;
+}
+
+/* ===== TOPBAR ===== */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  background:var(--teal);
+  color:#fff;
+  padding:12px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 2px 10px rgba(0,0,0,0.12);
+}
+.brand{
+  font-size:24px; font-weight:700; letter-spacing:0.5px;
+  display:flex; align-items:center; gap:8px;
+}
+.brand small{font-family:'Inter',sans-serif; font-size:11px; font-weight:500; opacity:0.75; letter-spacing:1px; text-transform:uppercase;}
+.session{
+  display:flex; align-items:center; gap:8px; font-size:13px;
+  background:rgba(255,255,255,0.1); padding:5px 12px 5px 6px; border-radius:30px;
+  flex-shrink:0;
+}
+.session b{font-weight:700;}
+
+/* ===== LAYOUT ===== */
+.layout{
+  display:flex; max-width:980px; margin:24px auto; gap:24px; padding:0 16px;
+}
+.sidebar{
+  width:230px; flex-shrink:0;
+}
+.mobile-profile-bar, .mobile-profile-menu, .mobile-menu-backdrop{display:none;}
+.sidebar h3{
+  font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--ink-soft);
+  font-family:'Inter',sans-serif; font-weight:600; margin:0 0 10px 4px;
+}
+.side-item{
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:10px; cursor:pointer; margin-bottom:2px;
+}
+.side-item:hover{background:#EDE6D6;}
+.side-item.active{background:var(--teal); color:#fff;}
+.side-item.active .side-sub{color:#EAE3D2;}
+.side-name{font-size:13.5px; font-weight:600;}
+.side-sub{font-size:11.5px; color:var(--ink-soft);}
+.feed{flex:1; min-width:0;}
+
+/* ===== AVATAR ===== */
+.avatar{
+  border-radius:50%; object-fit:cover; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-family:'Fraunces',serif; font-weight:600;
+}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+
+/* ===== PROFILE HEADER CARD ===== */
+.profile-card{
+  background:var(--card); border:1px solid var(--border); border-radius:16px;
+  overflow:hidden; margin-bottom:20px;
+}
+.cover{height:110px; position:relative;}
+.profile-body{padding:16px 20px 18px; position:relative;}
+.profile-avatar-wrap{margin-top:-52px; margin-bottom:8px;}
+.profile-name{font-size:22px; font-weight:700; margin:0;}
+.profile-meta{font-size:13px; color:var(--ink-soft); margin:2px 0 8px;}
+.birthday-tag{
+  display:inline-flex; align-items:center; gap:5px;
+  background:#FBF1DC; color:var(--gold); border:1px solid #ECD9A6;
+  font-size:12px; font-weight:600; padding:3px 10px; border-radius:30px; margin-bottom:8px;
+}
+.bio{font-size:13.5px; color:var(--ink); margin-bottom:10px;}
+.stats{display:flex; gap:18px; font-size:13px; color:var(--ink-soft);}
+.stats b{color:var(--ink);}
+.stats span{cursor:pointer;}
+.stats span:hover{color:var(--teal); text-decoration:underline;}
+.expand-list{font-size:13px; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); display:none;}
+.expand-list.open{display:block;}
+.expand-list a{color:var(--teal); text-decoration:none; margin-right:10px; font-weight:600; cursor:pointer;}
+.expand-list a:hover{text-decoration:underline;}
+.back-link{display:inline-block; margin-bottom:14px; color:var(--teal); font-weight:600; cursor:pointer; font-size:13.5px;}
+
+/* ===== POST CARD ===== */
+.post{
+  background:var(--card); border:1px solid var(--border); border-radius:16px;
+  margin-bottom:18px; overflow:hidden;
+}
+.post-header{display:flex; align-items:center; gap:10px; padding:14px 16px 10px;}
+.post-name{font-size:14.5px; font-weight:700; cursor:pointer;}
+.post-name:hover{color:var(--teal);}
+.post-date{font-size:12px; color:var(--ink-soft);}
+.post-text{padding:0 16px 12px; font-size:14.5px; white-space:pre-wrap;}
+.post-photos{display:grid; gap:3px; padding:0 2px;}
+.post-photos img, .photo-ph{width:100%; height:100%; object-fit:cover; display:block;}
+.photo-ph{
+  background:linear-gradient(135deg,#E9DCC2,#D9C9A3);
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  color:#7A6B49; font-size:12.5px; font-weight:600; padding:6px; min-height:90px;
+}
+.grid-1{grid-template-columns:1fr;}
+.grid-1 .ph-item{aspect-ratio:16/10;}
+.grid-2{grid-template-columns:1fr 1fr;}
+.grid-2 .ph-item{aspect-ratio:1/1;}
+.grid-3{grid-template-columns:1.2fr 1fr;}
+.grid-3 .ph-item:first-child{grid-row:span 2; aspect-ratio:3/4;}
+.grid-3 .ph-item{aspect-ratio:3/2;}
+.grid-4{grid-template-columns:1fr 1fr;}
+.grid-4 .ph-item{aspect-ratio:1/1;}
+
+.post-footer{padding:8px 16px 4px;}
+.likes-row{
+  display:flex; align-items:center; gap:6px; font-size:13px; color:var(--ink-soft);
+  padding:8px 0; border-top:1px solid var(--border);
+}
+.likes-row .heart{color:var(--coral);}
+.actions{display:flex; gap:18px; padding:6px 0 4px; border-top:1px solid var(--border); font-size:13px; color:var(--ink-soft); font-weight:600;}
+.actions span{cursor:default; opacity:0.65;}
+.comments{padding:4px 0 8px;}
+.comment{display:flex; gap:8px; margin-top:8px;}
+.comment-bubble{background:#F4EFE3; border-radius:14px; padding:7px 12px; font-size:13.5px;}
+.comment-name{font-weight:700; cursor:pointer;}
+.comment-name:hover{color:var(--teal);}
+
+.empty-note{color:var(--ink-soft); font-size:13.5px; text-align:center; padding:30px 0;}
+
+@media(max-width:680px){
+  body{font-size:14px;}
+  .topbar{padding:9px 12px;}
+  .brand{font-size:17px; gap:5px;}
+  .brand small{font-size:9px;}
+  .session{font-size:12px; padding:4px 10px 4px 5px; gap:6px;}
+  .layout{flex-direction:column; margin:10px auto; padding:0 8px; gap:10px;}
+  .sidebar{display:none;}
+  .mobile-profile-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:11px 14px; margin:0 0 10px; font-weight:600; font-size:13.5px; cursor:pointer;
+    font-family:'Fraunces',serif;
+  }
+  .mobile-profile-bar .chevron{transition:transform .2s; color:var(--ink-soft); font-family:'Inter',sans-serif;}
+  .mobile-profile-bar.open .chevron{transform:rotate(180deg);}
+  .mobile-menu-backdrop{display:none; position:fixed; inset:0; background:rgba(20,18,14,0.35); z-index:70;}
+  .mobile-menu-backdrop.open{display:block;}
+  .mobile-profile-menu{
+    display:none; position:fixed; left:8px; right:8px; top:62px;
+    background:var(--card); border-radius:14px; box-shadow:0 14px 34px rgba(0,0,0,0.22);
+    z-index:80; max-height:68vh; overflow-y:auto; padding:8px;
+  }
+  .mobile-profile-menu.open{display:block;}
+  .mobile-profile-menu .side-item{padding:9px 10px;}
+  .avatar-side{width:30px !important; height:30px !important; font-size:12px !important;}
+
+  .cover{height:78px;}
+  .profile-body{padding:12px 14px 14px;}
+  .avatar-profile{width:64px !important; height:64px !important; font-size:24px !important;}
+  .profile-avatar-wrap{margin-top:-40px; margin-bottom:6px;}
+  .profile-name{font-size:19px;}
+  .profile-meta{font-size:12px;}
+  .bio{font-size:13px;}
+  .stats{gap:14px; font-size:12.5px;}
+
+  .post{margin-bottom:12px; border-radius:13px;}
+  .post-header{padding:11px 12px 8px; gap:8px;}
+  .avatar-post{width:36px !important; height:36px !important; font-size:14px !important;}
+  .post-name{font-size:13.5px;}
+  .post-date{font-size:11px;}
+  .post-text{padding:0 12px 10px; font-size:13.5px;}
+  .post-footer{padding:6px 12px 2px;}
+  .actions{gap:14px; font-size:12px;}
+  .likes-row{font-size:12px; gap:5px;}
+  .comment-bubble{font-size:12.5px; padding:6px 10px;}
+  .avatar-comment{width:26px !important; height:26px !important; font-size:11px !important;}
+  .back-link{font-size:12.5px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">BookFace <small>sociaal netwerk</small></div>
+  <div class="session" id="sessieIndicator">Ingelogd als <b>Ingrid</b></div>
+</div>
+
+<div class="layout">
+  <div class="mobile-profile-bar" id="mobileProfileBar" onclick="toggleMobileMenu()">
+    <span id="mobileProfileLabel">📋 Bekijk profielen</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" onclick="closeMobileMenu()"></div>
+  <div class="mobile-profile-menu" id="mobileProfileMenu"></div>
+  <div class="sidebar">
+    <h3>Profielen</h3>
+    <div id="sidebarLijst"></div>
+  </div>
+  <div class="feed" id="feed"></div>
+</div>
+
+<script>
+/* =========================================================================
+   KOMPAAN – DATA BESTAND
+   -------------------------------------------------------------------------
+   Dit hele "sociale netwerk" is gewoon dit ene bestand. Geen database,
+   geen server: alle profielen en posts staan hieronder als gewone
+   JavaScript-lijstjes. Als monitor pas je gewoon deze lijstjes aan.
+
+   EEN PROFIEL TOEVOEGEN -> kopieer dit blokje en vul in:
+   {
+     id: "kortenaam",            // unieke code, gebruik je hieronder bij posts
+     naam: "Voornaam Achternaam",
+     leeftijd: 99,                // mag weg bij bedrijfspagina's
+     verjaardag: "1 januari",     // mag weg bij bedrijfspagina's
+     bio: "Korte omschrijving op het profiel",
+     foto: null,                  // of bv. "fotos/naam.jpg" voor een eigen profielfoto
+     kleur: "#7A8C8F",            // kleur van de avatar als er geen foto is
+     coverKleur: "linear-gradient(135deg,#7A8C8F,#5C6B6E)",
+     volgers: ["id1","id2"],      // wie volgt dit profiel
+     volgend:  ["id1","id2"]      // wie dit profiel zelf volgt
+   }
+
+   EEN POST TOEVOEGEN -> kopieer dit blokje en vul in:
+   {
+     id: 99,                          // uniek nummer
+     profielId: "kortenaam",          // wie plaatst de post
+     datum: "2026-07-01",             // jjjj-mm-dd, zo sorteert het automatisch
+     tekst: "De tekst van de post.",
+     fotos: [],                       // leeg, of bv. ["fotos/strand1.jpg"]
+                                       // nog geen foto? gebruik "PLACEHOLDER:Korte naam"
+     likes: ["id1","id2"],            // wie heeft de post geliket
+     reacties: [
+       { profielId:"id1", tekst:"Reactie hier" }
+     ]
+   }
+   ========================================================================= */
+
+const PROFIELEN = [
+  {
+    id:"ingrid", naam:"Ingrid Van Den Bergen", leeftijd:67, verjaardag:"14 mei",
+    bio:"Genietend van elk moment, samen met goede vrienden. 🌼",
+    foto:"imgs/Profiel_Ingrid.jpg", kleur:"#B98A9B", coverKleur:"linear-gradient(135deg,#D9B8C4,#B98A9B)",
+    volgers:["josefien","alessandro","hotel_lunigiana"],
+    volgend:["josefien","alessandro","hotel_lunigiana","marc","sophie"],
+    extraVolgersAantal:41, extraVolgersNamen:["Lotte Maes","Tom Verbeke","Nora Peeters"],
+    extraVolgendAantal:18, extraVolgendNamen:["Bram Willems","Eline De Smet"]
+  },
+  {
+    id:"josefien", naam:"Josefien Heuvel", leeftijd:69, verjaardag:"22 september",
+    bio:"Reizen, wandelen en het leven vieren. 🌈",
+    foto:"imgs/Profiel_Josefien.jpg", kleur:"#7B9E8E", coverKleur:"linear-gradient(135deg,#A9C9B8,#7B9E8E)",
+    volgers:["ingrid","hotel_lunigiana"],
+    volgend:["ingrid","alessandro","hotel_lunigiana"],
+    extraVolgersAantal:52, extraVolgersNamen:["Karel Dumont","Anke Roels","Femke Lauwers"],
+    extraVolgendAantal:14, extraVolgendNamen:["Maarten Goossens"]
+  },
+  {
+    id:"hotel_lunigiana", naam:"Hotel Lunigiana", bedrijf:true,
+    bio:"Boetiekhotel in het hart van Toscane. 🍷🇮🇹 Welkom thuis, ver van huis.",
+    foto:"imgs/Profiel_Hotel.jpg", kleur:"#A6743C", coverKleur:"linear-gradient(135deg,#D8B27E,#A6743C)",
+    volgers:["ingrid","josefien","alessandro","sophie"],
+    volgend:[],
+    extraVolgersAantal:612, extraVolgersNamen:["Studio Toscana Travel","Wine & Wander Tours","Giulia Conti"],
+    extraVolgendAantal:9, extraVolgendNamen:["Toscane Tourism Board"]
+  },
+  {
+    id:"alessandro", naam:"Alessandro Rossi", leeftijd:41,
+    bio:"Local guide in Toscane. Geschiedenis, wijn & verhalen. 🍇",
+    foto:"imgs/Profiel_Alessandro.jpg", kleur:"#4F7C82", coverKleur:"linear-gradient(135deg,#7FAAB0,#4F7C82)",
+    volgers:["ingrid","hotel_lunigiana"],
+    volgend:["hotel_lunigiana"],
+    extraVolgersAantal:183, extraVolgersNamen:["Marta Bianchi","Paolo Ferri","Linda Hughes"],
+    extraVolgendAantal:25, extraVolgendNamen:["Toscana Wine Tours"]
+  },
+  {
+    id:"marc", naam:"Marc Peeters", leeftijd:53,
+    bio:"Kookgek. Altijd op zoek naar het perfecte recept. 🍲",
+    foto:"imgs/Profiel_Marc.png", kleur:"#9C8254", coverKleur:"linear-gradient(135deg,#C9B486,#9C8254)",
+    volgers:["ingrid"], volgend:["ingrid"],
+    extraVolgersAantal:28, extraVolgersNamen:["Greet Van Acker","Dirk Smets"],
+    extraVolgendAantal:40, extraVolgendNamen:["Foodblog Vlaanderen"]
+  },
+  {
+    id:"sophie", naam:"Sophie Maes", leeftijd:71,
+    bio:"Backpacker. Op weg door Spanje deze zomer. 🇪🇸",
+    foto:"imgs/Profiel_Sophie.png", kleur:"#A85C46", coverKleur:"linear-gradient(135deg,#D08F77,#A85C46)",
+    volgers:["ingrid","hotel_lunigiana"], volgend:["ingrid","hotel_lunigiana"],
+    extraVolgersAantal:96, extraVolgersNamen:["Julia Pérez","Mike Anderson","Carla Ruiz"],
+    extraVolgendAantal:62, extraVolgendNamen:["Spain Backpacking Co"]
+  }
+];
+
+const POSTS = [
+  /* ---- Ingrid ---- */
+  { id:1, profielId:"ingrid", datum:"2026-03-03",
+    tekst:"Heerlijke wandeling vandaag met de vriendinnen! Het weer werkte fantastisch mee. 🌳☀️ (ook Josefien was er natuurlijk weer bij!)",
+    fotos:[], likes:["josefien"], extraLikes:9,
+    reacties:[{profielId:"josefien", tekst:"Wat een toffe dag was dat! Tot de volgende keer 😄"}] },
+
+  { id:2, profielId:"ingrid", datum:"2026-04-08",
+    tekst:"Prachtige wandeltocht rond het meer van Bled, samen met mijn beste vriendin Josefien 💙 Wat een uitzicht hadden we daar!",
+    fotos:["imgs/BledMeer.jpg","imgs/BledWandelPad.jpg"],
+    likes:["josefien"], extraLikes:17,
+    reacties:[{profielId:"josefien", tekst:"Dat uitzicht vergeet ik nooit meer! 💙"}] },
+
+  { id:3, profielId:"ingrid", datum:"2026-06-29",
+    tekst:"Met diep verdriet laat ik weten dat mijn lieve Hendrik ons is ontvallen.\nRust zacht, mijn allerliefste Hendrik Van Den Bergen. 💔🕊️",
+    fotos:["imgs/Begraaf.jpg"], likes:["josefien","marc"], extraLikes:64,
+    reacties:[
+      {profielId:"josefien", tekst:"Ik ben er voor je, Ingrid. Heel veel kracht toegewenst."},
+      {profielId:"marc", tekst:"Mijn oprechte deelneming, Ingrid."}
+    ] },
+
+  { id:4, profielId:"ingrid", datum:"2026-07-07",
+    tekst:"Groetjes uit Italië! 🇮🇹 Heerlijke dagen samen met Josefien, op ontdekking in Toscane onder leiding van onze fantastische gids Alessandro.",
+    fotos:["imgs/ItalieUitzicht.jpg","imgs/Wijngaard.jpg","imgs/IngidEnJosefien.png"],
+    likes:["josefien","alessandro"], extraLikes:23,
+    reacties:[{profielId:"alessandro", tekst:"Het was weer een waar genoegen om twee zo stralende dames door Toscane te mogen leiden 😉 Tot snel, Ingrid!"}] },
+
+  { id:5, profielId:"ingrid", datum:"2026-07-10",
+    tekst:"Heerlijke wijnavond bij Hotel Lunigiana 🍷 Wat een mooie avond was dit.",
+    fotos:["imgs/WijnAvondIngrid.png"],
+    likes:["hotel_lunigiana", "alessandro"], extraLikes:12,
+    reacties:[{profielId:"josefien", tekst:"Jammer dat ik er niet bij kon zijn... je pakt toch wel een glaasje voor mij mee naar de kamer? 😉"}, {profielId:"sophie", tekst:"Amai Ingrid, wie is dat?"}] },
+
+  /* ---- Josefien ---- */
+  { id:6, profielId:"josefien", datum:"2025-11-05",
+    tekst:"All love is equal. Trots op wie je bent, vandaag en elke dag. 🌈💕",
+    fotos:[], likes:["ingrid"], extraLikes:14, reacties:[] },
+
+  { id:7, profielId:"josefien", datum:"2026-04-08",
+    tekst:"Heerlijke wandeltocht rond het meer van Bled, samen met mijn dierbare vriendin Ingrid 💙",
+    fotos:["imgs/Bled.jpg","imgs/BledSamen.png"],
+    likes:["ingrid","marc"], extraLikes:8,
+    reacties:[
+      {profielId:"ingrid", tekst:"Wat een prachtige dag was dat, Josefien! 💙"},
+      {profielId:"marc", tekst:"Lijkt me een heerlijke tocht, genoten zo te zien!"}
+    ] },
+
+  { id:8, profielId:"josefien", datum:"2026-07-07",
+    tekst:"Groetjes uit Italië! Genieten van Toscane samen met mijn beste vriendin Ingrid 🇮🇹💕",
+    fotos:["imgs/SamenBrug.png","imgs/Tos.jpg"],
+    likes:["ingrid"], extraLikes:19,
+    reacties:[{profielId:"ingrid", tekst:"😍😍 Wat een prachtige plekken, geniet er nog even van!"}] },
+
+  /* ---- Hotel Lunigiana ---- */
+  { id:9, profielId:"hotel_lunigiana", datum:"2026-05-10",
+    tekst:"Goedemorgen vanuit ons terras met uitzicht over de Toscaanse heuvels. ☀️🍇",
+    fotos:["imgs/TerrasToscane.jpg"], likes:["sophie"], extraLikes:33, reacties:[] },
+
+  { id:10, profielId:"hotel_lunigiana", datum:"2026-06-02",
+    tekst:"Vanavond genieten onze gasten van een lokaal driegangendiner. 🍝🍷",
+    fotos:["imgs/Eten3gang.jpg"], likes:[], extraLikes:21, reacties:[] },
+
+  { id:11, profielId:"hotel_lunigiana", datum:"2026-07-10",
+    tekst:"Een sfeervolle wijnavond met onze gasten in de tuin. Proost! 🍷✨",
+    fotos:["imgs/Wijn1.jpg","imgs/Wijn2.jpg","imgs/Wijn3.jpg","imgs/Wijn4.jpg"],
+    likes:["ingrid"], extraLikes:45, reacties:[] },
+
+  /* ---- Alessandro ---- */
+  { id:12, profielId:"alessandro", datum:"2025-09-12",
+    tekst:"Mooie tocht vandaag door de wijngaarden van Chianti met een groep enthousiaste reizigers. 🍇",
+    fotos:["imgs/Chanti.jpg","imgs/Chanti2.jpg"],
+    likes:["ingrid"], extraLikes:16,
+    reacties:[{profielId:"ingrid", tekst:"Wat een prachtige plekken laat je altijd zien, Alessandro! 😍"}] },
+
+  { id:13, profielId:"alessandro", datum:"2025-10-20",
+    tekst:"Vandaag de oude binnenstad van Lucca verkend met een fijne groep.",
+    fotos:["imgs/Lucca.jpg"],
+    likes:["ingrid"], extraLikes:6, reacties:[] },
+
+  { id:14, profielId:"alessandro", datum:"2026-01-15",
+    tekst:"Winterwandeling door de Toscaanse heuvels, ook mooi in dit seizoen. ❄️🌿",
+    fotos:["imgs/Winter.jpg","imgs/Winter2.jpg"],
+    likes:["ingrid"], extraLikes:12,
+    reacties:[{profielId:"ingrid", tekst:"Zo mooi! Hoop je snel terug te zien, Alessandro 😉"}] },
+
+  { id:15, profielId:"alessandro", datum:"2026-05-02",
+    tekst:"Een dag vol geschiedenis in Siena met een geweldige groep.",
+    fotos:["imgs/Plein.jpg"],
+    likes:["ingrid"], extraLikes:9,
+    reacties:[{profielId:"ingrid", tekst:"Jij maakt elke tocht speciaal! 😊"}] },
+
+  /* ---- Extra profielen, los van het verhaal ---- */
+  { id:16, profielId:"marc", datum:"2026-02-14",
+    tekst:"Vandaag een nieuw recept geprobeerd: Vlaamse stoverij met frietjes. 🍟🍖 Een succes!",
+    fotos:["imgs/Stoofvlees.jpg"], likes:["ingrid"], extraLikes:18, reacties:[] },
+
+  { id:17, profielId:"marc", datum:"2026-05-20",
+    tekst:"Aardbeientijd! Wie heeft er een goed recept voor aardbeientaart? 🍓",
+    fotos:["imgs/Aardbei.jpg"], likes:[], extraLikes:4, reacties:[] },
+
+  { id:18, profielId:"sophie", datum:"2026-06-10",
+    tekst:"Op naar Spanje voor een nieuw avontuur! ✈️🇪🇸",
+    fotos:["imgs/Vliegveld.jpg"], likes:["ingrid"], extraLikes:27, reacties:[] },
+
+  { id:19, profielId:"sophie", datum:"2026-07-15",
+    tekst:"Tapas, zon en zee - dit is het leven. 🌞🥘",
+    fotos:["imgs/Tapas.jpg","imgs/StrandSpanje.jpg"], likes:[], extraLikes:15, reacties:[] }
+];
+
+/* =========================================================================
+   HIERONDER STAAT ENKEL WEERGAVE-CODE (hoeft normaal niet aangepast)
+   ========================================================================= */
+
+const MAANDEN = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+function getProfiel(id){ return PROFIELEN.find(p=>p.id===id); }
+function formatDatum(iso){
+  const [j,m,d] = iso.split("-").map(Number);
+  return `${d} ${MAANDEN[m-1]} ${j}`;
+}
+function initialen(naam){
+  return naam.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
+}
+function renderAvatar(profiel, size, extraClass){
+  extraClass = extraClass || "";
+  const style = `width:${size}px;height:${size}px;font-size:${size*0.38}px;background:${profiel.kleur};border:2px solid #fff;`;
+  if(profiel.foto){
+    return `<div class="avatar ${extraClass}" style="${style}"><img src="${profiel.foto}" onerror="this.parentElement.innerHTML='${initialen(profiel.naam)}'"></div>`;
+  }
+  return `<div class="avatar ${extraClass}" style="${style}">${initialen(profiel.naam)}</div>`;
+}
+function renderFoto(src){
+  if(src.startsWith("PLACEHOLDER:")){
+    const label = src.replace("PLACEHOLDER:","");
+    return `<div class="ph-item"><div class="photo-ph">📷<br>${label}</div></div>`;
+  }
+  return `<div class="ph-item"><img src="${src}" onerror="this.parentElement.innerHTML='<div class=photo-ph>📷<br>foto ontbreekt</div>'"></div>`;
+}
+function renderFotos(fotos){
+  if(!fotos || fotos.length===0) return "";
+  const n = Math.min(fotos.length,4);
+  const klasse = n===1?"grid-1":n===2?"grid-2":n===3?"grid-3":"grid-4";
+  return `<div class="post-photos ${klasse}">${fotos.slice(0,4).map(renderFoto).join("")}</div>`;
+}
+function naamLink(id){
+  const p = getProfiel(id);
+  return `<span class="comment-name" onclick="toonProfiel('${id}')">${p.naam}</span>`;
+}
+function renderPost(post){
+  const auteur = getProfiel(post.profielId);
+  const extra = post.extraLikes||0;
+  const echteNamen = (post.likes||[]).map((id,i)=>`<span class="comment-name" onclick="toonProfiel('${id}')">${getProfiel(id).naam}</span>`);
+  const totaalLikes = (post.likes||[]).length + extra;
+  let likesHtml = "";
+  if(totaalLikes>0){
+    let tekst;
+    if(echteNamen.length && extra>0) tekst = `Geliket door ${echteNamen.join(", ")} en nog ${extra} ${extra===1?'andere persoon':'anderen'}`;
+    else if(echteNamen.length) tekst = `Geliket door ${echteNamen.join(", ")}`;
+    else tekst = `Geliket door ${extra} ${extra===1?'persoon':'mensen'}`;
+    likesHtml = `<div class="likes-row"><span class="heart">♥</span> <b>${totaalLikes}</b> &middot; ${tekst}</div>`;
+  }
+  const reacties = (post.reacties||[]).map(r=>`
+    <div class="comment">
+      ${renderAvatar(getProfiel(r.profielId),30,"avatar-comment")}
+      <div class="comment-bubble">${naamLink(r.profielId)}<br>${r.tekst}</div>
+    </div>`).join("");
+  return `
+  <div class="post">
+    <div class="post-header">
+      ${renderAvatar(auteur,42,"avatar-post")}
+      <div>
+        <div class="post-name" onclick="toonProfiel('${auteur.id}')">${auteur.naam}</div>
+        <div class="post-date">${formatDatum(post.datum)}</div>
+      </div>
+    </div>
+    <div class="post-text">${post.tekst}</div>
+    ${renderFotos(post.fotos)}
+    <div class="post-footer">
+      ${likesHtml}
+      <div class="actions"><span>♡ Vind ik leuk</span><span>💬 Reageer</span><span>↗ Deel</span></div>
+      <div class="comments">${reacties}</div>
+    </div>
+  </div>`;
+}
+
+function postsVan(profielId){
+  return POSTS.filter(p=>p.profielId===profielId).sort((a,b)=>b.datum.localeCompare(a.datum));
+}
+function allePosts(){
+  return [...POSTS].sort((a,b)=>b.datum.localeCompare(a.datum));
+}
+
+function renderSidebar(actief){
+  const html = PROFIELEN.map(p=>`
+    <div class="side-item ${p.id===actief?'active':''}" onclick="toonProfiel('${p.id}')">
+      ${renderAvatar(p,34,"avatar-side")}
+      <div>
+        <div class="side-name">${p.naam}</div>
+        <div class="side-sub">${p.bedrijf?"Bedrijfspagina":(p.leeftijd+" jaar")}</div>
+      </div>
+    </div>`).join("");
+  document.getElementById("sidebarLijst").innerHTML = html;
+  document.getElementById("mobileProfileMenu").innerHTML = html;
+  const label = document.getElementById("mobileProfileLabel");
+  label.textContent = actief ? ("👤 " + getProfiel(actief).naam) : "📋 Bekijk profielen";
+  closeMobileMenu();
+}
+
+function toggleMobileMenu(){
+  document.getElementById("mobileProfileMenu").classList.toggle("open");
+  document.getElementById("mobileMenuBackdrop").classList.toggle("open");
+  document.getElementById("mobileProfileBar").classList.toggle("open");
+}
+function closeMobileMenu(){
+  document.getElementById("mobileProfileMenu").classList.remove("open");
+  document.getElementById("mobileMenuBackdrop").classList.remove("open");
+  document.getElementById("mobileProfileBar").classList.remove("open");
+}
+
+function volgLijstHtml(ids, extraNamen, extraAantal){
+  extraNamen = extraNamen || [];
+  extraAantal = extraAantal || 0;
+  const echte = (ids||[]).map(id=>`<a onclick="toonProfiel('${id}')">${getProfiel(id).naam}</a>`);
+  const extra = extraNamen.map(n=>`<span style="color:var(--ink-soft)">${n}</span>`);
+  const lijst = [...echte, ...extra];
+  let html = lijst.length ? lijst.join(", ") : "<span style='color:var(--ink-soft)'>geen</span>";
+  const rest = extraAantal - extraNamen.length;
+  if(rest>0) html += ` <span style="color:var(--ink-soft)">en nog ${rest} ${rest===1?'andere':'anderen'}</span>`;
+  return html;
+}
+
+function renderProfielPagina(id){
+  const p = getProfiel(id);
+  const posts = postsVan(id);
+  const verjaardagHtml = p.verjaardag ? `<div class="birthday-tag">🎂 Jarig op ${p.verjaardag}</div><br>` : "";
+  const leeftijdHtml = p.bedrijf ? "" : `<span> · ${p.leeftijd} jaar</span>`;
+  const header = `
+    <div class="profile-card">
+      <div class="cover" style="background:${p.coverKleur}"></div>
+      <div class="profile-body">
+        <div class="profile-avatar-wrap">${renderAvatar(p,84,"avatar-profile")}</div>
+        <h2 class="profile-name">${p.naam}</h2>
+        <div class="profile-meta">${p.bedrijf?"Bedrijfspagina":"Persoonlijk profiel"}${leeftijdHtml}</div>
+        ${verjaardagHtml}
+        <div class="bio">${p.bio}</div>
+        <div class="stats">
+          <span onclick="toggleExpand('volgers')"><b>${p.volgers.length + (p.extraVolgersAantal||0)}</b> volgers</span>
+          <span onclick="toggleExpand('volgend')"><b>${p.volgend.length + (p.extraVolgendAantal||0)}</b> volgend</span>
+        </div>
+        <div class="expand-list" id="exp-volgers">${volgLijstHtml(p.volgers, p.extraVolgersNamen, p.extraVolgersAantal)}</div>
+        <div class="expand-list" id="exp-volgend">${volgLijstHtml(p.volgend, p.extraVolgendNamen, p.extraVolgendAantal)}</div>
+      </div>
+    </div>`;
+  const postsHtml = posts.length
+    ? posts.map(renderPost).join("")
+    : `<div class="empty-note">Nog geen posts van ${p.naam}.</div>`;
+  document.getElementById("feed").innerHTML =
+    `<span class="back-link" onclick="toonTijdlijn()">← Terug naar tijdlijn</span>` + header + postsHtml;
+  renderSidebar(id);
+}
+
+function toggleExpand(welke){
+  const el = document.getElementById("exp-"+welke);
+  el.classList.toggle("open");
+}
+
+function toonTijdlijn(){
+  const html = `<h3 style="margin:4px 0 14px 4px;color:var(--ink-soft);font-family:'Inter',sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Tijdlijn — alle posts</h3>` +
+    allePosts().map(renderPost).join("");
+  document.getElementById("feed").innerHTML = html;
+  renderSidebar(null);
+}
+
+function toonProfiel(id){ renderProfielPagina(id); window.scrollTo({top:0}); }
+
+function vulSessieIndicator(){
+  const ingrid = getProfiel("ingrid");
+  document.getElementById("sessieIndicator").innerHTML =
+    `${renderAvatar(ingrid,26,"avatar-side")} Ingelogd als <b>${ingrid.naam.split(" ")[0]}</b>`;
+}
+
+vulSessieIndicator();
+toonTijdlijn();
+</script>
+</body>
+</html>
